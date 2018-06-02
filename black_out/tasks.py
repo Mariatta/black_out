@@ -133,7 +133,7 @@ def black_pr_task(pr_number, pr_author, pr_diff_url):
             [
                 "git",
                 "push",
-                f"git@github.com:<{pr_author}>/{os.environ.get('GH_REPO_NAME')}",
+                f"git@github.com:{pr_author}/{os.environ.get('GH_REPO_NAME')}",
                 branch_name,
             ]
         )
