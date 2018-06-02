@@ -31,12 +31,12 @@ def check_black(src):
 def commit_changes(issue_number):
     title = "🤖 Format code using `black`"
     body = f"""
-
-Closes #{issue_number}.
-(I'm a bot 🤖)
+    
+    Closes #{issue_number}.
+    (I'm a bot 🤖)
     """
     message = title + body
-    cmd = ["git", "commit", "--am", message]
+    cmd = ["git", "commit", "-am", message]
     subprocess.check_output(cmd)
     return title, body
 
