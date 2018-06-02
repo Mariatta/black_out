@@ -17,8 +17,10 @@ def setup_repo():
 
     repo_name = os.environ.get('GH_REPO_NAME')
     repo_full_name = os.environ.get('GH_REPO_FULL_NAME')
-
+    os.mkdir('repo_checkout')
+    os.chdir('repo_checkout')
     print(f"Setting up {repo_name} repository, cloning from {repo_full_name}")
+
     if repo_name not in os.listdir('.'):
         email_address = os.environ.get('GH_EMAIL')
         full_name = os.environ.get('GH_FULL_NAME')
