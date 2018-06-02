@@ -111,9 +111,11 @@ def close_issue(issue_number):
 def get_pr_diff_files(diff_url):
     result = requests.get(diff_url)
     lines = result.text.split("\n")
+    result = []
     for line in lines:
         if line.strip().startswith("diff --git "):
             chunks = line.strip().split(" ")
             a_file = chunks[2]
             filename = a_file[2:]
-            yield filename
+            result.append(filename)
+    return result
