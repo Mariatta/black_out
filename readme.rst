@@ -89,14 +89,17 @@ In Heroku, set the environment variables:
 - ``GH_AUTH``: The oauth token for the bot user.
 - ``GH_SECRET``: The GitHub webhook secret.
 
-Add the Heroku Redis add-on.
+Add the Heroku Redis add-on, and **turn it on**.
 
 GitHub webhook settings
 -----------------------
 
-Enable the webhooks on:
+Enable the webhook events on:
+
 - Issues
+
 - Pushes (only needed to blacken incoming pull requests)
+
 - Pull requests (only needed to blacken incoming pull requests)
 
 
