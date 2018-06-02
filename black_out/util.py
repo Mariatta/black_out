@@ -28,11 +28,12 @@ def check_black(src):
     return result
 
 
-def commit_changes(issue_number):
+def commit_changes(issue_number=None):
     title = "🤖 Format code using `black`"
+    closes_issue_message = f"Closes #{issue_number}" if issue_number else ""
     body = f"""
 
-Closes #{issue_number}.
+{closes_issue_message}
 (I'm a bot 🤖)
 """
     message = title + body
