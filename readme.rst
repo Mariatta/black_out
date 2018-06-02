@@ -11,8 +11,8 @@ I'm wanting a GitHub bot that can:
   affected changed files.
 
 
-Blacken an entire repo
-======================
+Blacken an entire repo (status: done!!)
+=======================================
 
 How to blacken an entire repo initially, for a project that did not use ``black``
 before? I guess someone needs to check out the repo, run ``black``, then commit
@@ -24,7 +24,7 @@ boring work and potentially a lot of repetition.
 
 So I want a bot to do those boring things.
 
-What I have in mind:
+What I had in mind:
 
 1. deploy the bot
 2. create a new issue, commanding the bot to blacken the repo
@@ -42,6 +42,10 @@ repo:
 
 All stolen from `Darren Hayes <https://youtu.be/gJMNWTioW34>`_ of course.
 
+This is now done! Issue `#5 <https://github.com/Mariatta/black_out/issues/5>`_ is an example.
+I created an issue that says: "Black out the sun". The bot picks it up, ran black against
+its own code, then created the `PR <https://github.com/Mariatta/black_out/pull/12>`_ containing
+the formatted files.
 
 Blacken incoming pull request
 =============================
