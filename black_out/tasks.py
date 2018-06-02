@@ -6,29 +6,39 @@ from celery import bootsteps
 
 from . import util, exceptions
 
-app = celery.Celery('black_out')
+app = celery.Celery("black_out")
 
-app.conf.update(BROKER_URL=os.environ['REDIS_URL'],
-                CELERY_RESULT_BACKEND=os.environ['REDIS_URL'])
+app.conf.update(
+    BROKER_URL=os.environ["REDIS_URL"], CELERY_RESULT_BACKEND=os.environ["REDIS_URL"]
+)
 
 
 @app.task(rate_limit="1/m")
 def setup_repo():
 
-    repo_name = os.environ.get('GH_REPO_NAME')
-    repo_full_name = os.environ.get('GH_REPO_FULL_NAME')
-    os.mkdir('repo_checkout')
-    os.chdir('repo_checkout')
+    repo_name = os.environ.get("GH_REPO_NAME")
+    repo_full_name = os.environ.get("GH_REPO_FULL_NAME")
+    os.mkdir("repo_checkout")
+    os.chdir("repo_checkout")
     print(f"Setting up {repo_name} repository, cloning from {repo_full_name}")
 
-    if repo_name not in os.listdir('.'):
-        email_address = os.environ.get('GH_EMAIL')
-        full_name = os.environ.get('GH_FULL_NAME')
+    if repo_name not in os.listdir("."):
+        email_address = os.environ.get("GH_EMAIL")
+        full_name = os.environ.get("GH_FULL_NAME")
         subprocess.check_output(
-            ["git", "clone", f"https://{os.environ.get('GH_AUTH')}:x-oauth-basic@github.com/{repo_full_name}.git"])
-        subprocess.check_output(["git", "config", "--global", "user.email", f"'{email_address}'"])
-        subprocess.check_output(["git", "config", "--global", "user.name", f"'{full_name}'"])
-        os.chdir(f'./{repo_name}')
+            [
+                "git",
+                "clone",
+                f"https://{os.environ.get('GH_AUTH')}:x-oauth-basic@github.com/{repo_full_name}.git",
+            ]
+        )
+        subprocess.check_output(
+            ["git", "config", "--global", "user.email", f"'{email_address}'"]
+        )
+        subprocess.check_output(
+            ["git", "config", "--global", "user.name", f"'{full_name}'"]
+        )
+        os.chdir(f"./{repo_name}")
         print(f"Finished setting up {repo_name} Repo")
     else:
         print(f"{repo_name} directory already exists")
@@ -48,8 +58,8 @@ def initiate_black_task(issue_number, issue_creator):
     7. git branch -D issue-NNNN-initialize-black
     """
     # cd to the checked out repo, if not already there
-    if 'repo_checkout' in os.listdir("."):
-        os.chdir('repo_checkout')
+    if "repo_checkout" in os.listdir("."):
+        os.chdir("repo_checkout")
         os.chdir(f"./{os.environ.get('GH_REPO_NAME')}")
 
     branch_name = f"issue-{issue_number}-initialize-black"
@@ -72,12 +82,7 @@ black has been initiated? (I'm a bot 🤖)
         util.exec_command(["black", "."])
         commit_title, commit_body = util.commit_changes(issue_number)
         util.exec_command(["git", "push", "origin", branch_name])
-        util.create_gh_pr(
-            "master",
-            branch_name,
-            title=commit_title,
-            body=commit_body,
-        )
+        util.create_gh_pr("master", branch_name, title=commit_title, body=commit_body)
         util.exec_command(["git", "checkout", "master"])
         util.delete_branch(branch_name)
     else:
@@ -105,15 +110,16 @@ def black_pr_task(pr_number, pr_author, pr_diff_url):
     8. git branch -D pr_{pr_number}
     """
     # cd to the checked out repo, if not already there
-    if 'repo_checkout' in os.listdir("."):
-        os.chdir('repo_checkout')
+    if "repo_checkout" in os.listdir("."):
+        os.chdir("repo_checkout")
         os.chdir(f"./{os.environ.get('GH_REPO_NAME')}")
 
-    util.exec_command(["git", "fetch", "origin", f"pull/{pr_number}/head:pr_{pr_number}"])
+    util.exec_command(
+        ["git", "fetch", "origin", f"pull/{pr_number}/head:pr_{pr_number}"]
+    )
     util.exec_command(["git", "checkout", f"pr_{pr_number}"])
     files_affected = util.get_pr_diff_files(pr_diff_url)
     branch_name = f"pr_{pr_number}"
-
 
     needs_black = util.check_black(files_affected)
 
@@ -123,13 +129,15 @@ def black_pr_task(pr_number, pr_author, pr_diff_url):
         util.exec_command(commands)
 
         commit_title, commit_body = util.commit_changes(pr_number)
-        util.exec_command(["git", "push", f"git@github.com:<{pr_author}>/{os.environ.get('GH_REPO_NAME')}", branch_name])
-        util.create_gh_pr(
-            "master",
-            branch_name,
-            title=commit_title,
-            body=commit_body,
+        util.exec_command(
+            [
+                "git",
+                "push",
+                f"git@github.com:<{pr_author}>/{os.environ.get('GH_REPO_NAME')}",
+                branch_name,
+            ]
         )
+        util.create_gh_pr("master", branch_name, title=commit_title, body=commit_body)
         message = f"""
 🤖 @{pr_author}, I've reformatted the code using `black` for you. 🌮
 (I'm a bot 🤖)
@@ -140,10 +148,9 @@ def black_pr_task(pr_number, pr_author, pr_diff_url):
 
 
 class InitRepoStep(bootsteps.StartStopStep):
-
     def start(self, c):
         print("Initialize the repository.")
         setup_repo()
 
 
-app.steps['worker'].add(InitRepoStep)
+app.steps["worker"].add(InitRepoStep)
