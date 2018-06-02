@@ -22,19 +22,22 @@ async def main(request):
         body = await request.read()
         secret = os.environ.get("GH_SECRET")
         event = sansio.Event.from_http(request.headers, body, secret=secret)
-        print('GH delivery ID', event.delivery_id, file=sys.stderr)
+        print("GH delivery ID", event.delivery_id, file=sys.stderr)
         if event.event == "ping":
             return web.Response(status=200)
         oauth_token = os.environ.get("GH_AUTH")
         async with aiohttp.ClientSession() as session:
-            gh = gh_aiohttp.GitHubAPI(session, os.environ.get('GH_USERNAME'),
-                                      oauth_token=oauth_token,
-                                      cache=cache)
+            gh = gh_aiohttp.GitHubAPI(
+                session,
+                os.environ.get("GH_USERNAME"),
+                oauth_token=oauth_token,
+                cache=cache,
+            )
             # Give GitHub some time to reach internal consistency.
             await asyncio.sleep(1)
             await router.dispatch(event, gh)
         try:
-            print('GH requests remaining:', gh.rate_limit.remaining)
+            print("GH requests remaining:", gh.rate_limit.remaining)
         except AttributeError:
             pass
         return web.Response(status=200)
