@@ -89,6 +89,7 @@ In Heroku, set the environment variables:
 - ``GH_AUTH``: The oauth token for the bot user.
 - ``GH_SECRET``: The GitHub webhook secret.
 
+Add the Heroku Redis add-on.
 
 GitHub webhook settings
 -----------------------
