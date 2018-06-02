@@ -128,12 +128,12 @@ def black_pr_task(pr_number, pr_author, pr_diff_url):
         commands.extend(files_affected)
         util.exec_command(commands)
 
-        commit_title, commit_body = util.commit_changes(pr_number)
+        commit_title, commit_body = util.commit_changes()
         util.exec_command(
             [
                 "git",
                 "push",
-                f"git@github.com:{pr_author}/{os.environ.get('GH_REPO_NAME')}",
+                f"https://{os.environ.get('GH_AUTH')}:x-oauth-basic@github.com/{pr_author}/{os.environ.get('GH_REPO_NAME')}.git",
                 branch_name,
             ]
         )
