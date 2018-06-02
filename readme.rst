@@ -69,7 +69,10 @@ Deployment
 Heroku settings
 ---------------
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/mariatta/black_out)
+|Deploy|
+
+.. |Deploy| image:: https://www.herokucdn.com/deploy/button.svg
+   :target: https://heroku.com/deploy?template=https://github.com/mariatta/black_out
 
 In Heroku, set the environment variables:
 
