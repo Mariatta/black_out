@@ -100,51 +100,57 @@ Closing the issue. 🌮
 def black_pr_task(pr_number, pr_author, pr_diff_url):
     """Execute black on a PR
 
-    1. git fetch origin pull/{pr_number}/head:pr_{pr_number} && git checkout pr_number
-    2. find out all affected files
-    3. black <all affected files>
-    4. git commit -am "🤖 Format code using `black` ..."
-    5. git push git@github.com:<pr_author>/{repo_name} pr_{pr_number}:{branch_name}
+    1. mkdir pr_author_pr_number
+    2. cd pr_author_pr_number
+    3. git clone https://{os.environ.get('GH_AUTH')}:x-oauth-basic@github.com/{pr_author}/{os.environ.get('GH_REPO_NAME')}.git
+    4. cd repo_name
+    4. git checkout branch
+    5. find out all affected files
+    6. black <all affected files>
+    7. git commit -am "🤖 Format code using `black` ..."
+    8. git push https://{os.environ.get('GH_AUTH')}:x-oauth-basic@github.com/{pr_author}/{os.environ.get('GH_REPO_NAME')}.git branch
     6. comment on PR
-    7. git checkout master
-    8. git branch -D pr_{pr_number}
+    7. cd ../..
+    8. rm -rf pr_author_pr_number
     """
     # cd to the checked out repo, if not already there
     if "repo_checkout" in os.listdir("."):
         os.chdir("repo_checkout")
         os.chdir(f"./{os.environ.get('GH_REPO_NAME')}")
 
-    util.exec_command(
-        ["git", "fetch", "origin", f"pull/{pr_number}/head:pr_{pr_number}"]
-    )
-    util.exec_command(["git", "checkout", f"pr_{pr_number}"])
-    files_affected = util.get_pr_diff_files(pr_diff_url)
-    branch_name = f"pr_{pr_number}"
+    pass
 
-    needs_black = util.check_black(files_affected)
-
-    if needs_black:
-        commands = ["black"]
-        commands.extend(files_affected)
-        util.exec_command(commands)
-
-        commit_title, commit_body = util.commit_changes()
-        util.exec_command(
-            [
-                "git",
-                "push",
-                f"https://{os.environ.get('GH_AUTH')}:x-oauth-basic@github.com/{pr_author}/{os.environ.get('GH_REPO_NAME')}.git",
-                branch_name,
-            ]
-        )
-        util.create_gh_pr("master", branch_name, title=commit_title, body=commit_body)
-        message = f"""
-🤖 @{pr_author}, I've reformatted the code using `black` for you. 🌮
-(I'm a bot 🤖)
-"""
-        util.comment_on_pr(pr_number, message)
-    util.exec_command(["git", "checkout", "master"])
-    util.delete_branch(branch_name)
+#     util.exec_command(
+#         ["git", "fetch", "origin", f"pull/{pr_number}/head:pr_{pr_number}"]
+#     )
+#     util.exec_command(["git", "checkout", f"pr_{pr_number}"])
+#     files_affected = util.get_pr_diff_files(pr_diff_url)
+#     branch_name = f"pr_{pr_number}"
+#
+#     needs_black = util.check_black(files_affected)
+#
+#     if needs_black:
+#         commands = ["black"]
+#         commands.extend(files_affected)
+#         util.exec_command(commands)
+#
+#         commit_title, commit_body = util.commit_changes()
+#         util.exec_command(
+#             [
+#                 "git",
+#                 "push",
+#                 f"https://{os.environ.get('GH_AUTH')}:x-oauth-basic@github.com/{pr_author}/{os.environ.get('GH_REPO_NAME')}.git",
+#                 branch_name,
+#             ]
+#         )
+#         util.create_gh_pr("master", branch_name, title=commit_title, body=commit_body)
+#         message = f"""
+# 🤖 @{pr_author}, I've reformatted the code using `black` for you. 🌮
+# (I'm a bot 🤖)
+# """
+#         util.comment_on_pr(pr_number, message)
+#     util.exec_command(["git", "checkout", "master"])
+#     util.delete_branch(branch_name)
 
 
 class InitRepoStep(bootsteps.StartStopStep):
