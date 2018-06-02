@@ -73,7 +73,7 @@ def create_gh_pr(base_branch, head_branch, *, title, body):
     data = {
         "title": title,
         "body": body,
-        "head": f"{username}:{head_branch}",
+        "head": head_branch,
         "base": base_branch,
         "maintainer_can_modify": True,
     }
