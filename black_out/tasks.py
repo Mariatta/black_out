@@ -107,7 +107,8 @@ def black_pr_task(pr_number, pr_author, pr_diff_url):
     if os.environ.get('GH_REPO_NAME') in os.listdir("."):
         os.chdir(os.environ.get('GH_REPO_NAME'))
 
-    util.exec_command(["git", "fetch", "origin", f"pull/{pr_number}/head:pr_{pr_number}", "&&", "git", "checkout", f"pr_{pr_number}"])
+    util.exec_command(["git", "fetch", "origin", f"pull/{pr_number}/head:pr_{pr_number}"])
+    util.exec_command(["git", "checkout", f"pr_{pr_number}"])
     files_affected = util.get_pr_diff_files(pr_diff_url)
     branch_name = f"pr_{pr_number}"
 
