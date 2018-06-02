@@ -1,0 +1,7 @@
+aiohttp
+black
+cachetools
+celery
+gidgethub
+requests
+redis

@@ -1,0 +1,5 @@
+{
+  "name": "black_out",
+  "description": "Format a repo using `black`",
+  "repository": "https://github.com/mariatta/black"
+}
