@@ -135,7 +135,7 @@ def black_pr_task(pr_number, pr_author, pr_diff_url):
 (I'm a bot 🤖)
 """
         util.comment_on_pr(pr_number, message)
-    util.checkout_branch("master")
+    util.exec_command(["git", "checkout", "master"])
     util.delete_branch(branch_name)
 
 
