@@ -120,6 +120,7 @@ def black_pr_task(pr_number, pr_author, pr_diff_url):
 
     pass
 
+
 #     util.exec_command(
 #         ["git", "fetch", "origin", f"pull/{pr_number}/head:pr_{pr_number}"]
 #     )
