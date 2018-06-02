@@ -48,8 +48,9 @@ def initiate_black_task(issue_number, issue_creator):
     7. git branch -D issue-NNNN-initialize-black
     """
     # cd to the checked out repo, if not already there
-    if os.environ.get('GH_REPO_NAME') in os.listdir("."):
-        os.chdir(os.environ.get('GH_REPO_NAME'))
+    if 'repo_checkout' in os.listdir("."):
+        os.chdir('repo_checkout')
+        os.chdir(f"./{os.environ.get('GH_REPO_NAME')}")
 
     branch_name = f"issue-{issue_number}-initialize-black"
 
@@ -104,8 +105,9 @@ def black_pr_task(pr_number, pr_author, pr_diff_url):
     8. git branch -D pr_{pr_number}
     """
     # cd to the checked out repo, if not already there
-    if os.environ.get('GH_REPO_NAME') in os.listdir("."):
-        os.chdir(os.environ.get('GH_REPO_NAME'))
+    if 'repo_checkout' in os.listdir("."):
+        os.chdir('repo_checkout')
+        os.chdir(f"./{os.environ.get('GH_REPO_NAME')}")
 
     util.exec_command(["git", "fetch", "origin", f"pull/{pr_number}/head:pr_{pr_number}"])
     util.exec_command(["git", "checkout", f"pr_{pr_number}"])
