@@ -85,19 +85,19 @@ def create_gh_pr(base_branch, head_branch, *, title, body):
         print(response.text)
 
 
-def update_pr(event, file_path, new_content):
+def update_pr(event_data, file_path, new_content):
     """
     Update a file in the PR
     """
-    url = f"https://api.github.com/repos/{event.data['pull_request']['head']['repo']['full_name']}/contents/{file_path}"
+    url = f"https://api.github.com/repos/{event_data['pull_request']['head']['repo']['full_name']}/contents/{file_path}"
     request_headers = get_request_headers()
 
     data = {
         "path": file_path,
         "message": "🐍🌚🤖 Formatted using `black`.",
         "content": new_content,
-        "sha": event.data["pull_request"]["head"]["sha"],
-        "branch": event.data["pull_request"]["head"]["ref"],
+        "sha": event_data["pull_request"]["head"]["sha"],
+        "branch": event_data["pull_request"]["head"]["ref"],
         "committer": {
             "name": os.environ.get("GH_USERNAME"),
             "email": os.environ.get("GH_EMAIL"),

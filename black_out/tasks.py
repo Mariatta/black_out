@@ -98,7 +98,7 @@ Closing the issue. 🌮
 
 
 @app.task(rate_limit="1/m")
-def black_pr_task(event):
+def black_pr_task(event_data):
     """Execute black on a PR
 
     1. git fetch origin pull/{pr_number}/head:pr_{pr_number}
@@ -115,10 +115,10 @@ def black_pr_task(event):
         os.chdir("repo_checkout")
         os.chdir(f"./{os.environ.get('GH_REPO_NAME')}")
 
-    pr_author = event.data["pull_request"]["user"]["login"]
+    pr_author = event_data["pull_request"]["user"]["login"]
 
-    pr_number = event.data["pull_request"]["number"]
-    pr_diff_url = event.data["pull_request"]["diff_url"]
+    pr_number = event_data["pull_request"]["number"]
+    pr_diff_url = event_data["pull_request"]["diff_url"]
 
     util.exec_command(
         ["git", "fetch", "origin", f"pull/{pr_number}/head:pr_{pr_number}"]
@@ -136,7 +136,7 @@ def black_pr_task(event):
             with open(path, "rb") as reader:
                 encoded = base64.b64encode(reader.read())
                 decoded = encoded.decode("utf-8")
-                util.update_pr(event, path, decoded)
+                util.update_pr(event_data, path, decoded)
                 blackened_files.append(path)
 
     if blackened_files:

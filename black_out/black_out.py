@@ -29,4 +29,4 @@ async def issue_opened(event, gh, *args, **kwargs):
 @router.register("pull_request", action="reopened")
 @router.register("pull_request", action="synchronize")
 async def pr_opened(event, gh, *args, **kwargs):
-    tasks.black_pr_task.delay(event)
+    tasks.black_pr_task.delay(event.data)
