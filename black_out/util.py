@@ -65,11 +65,9 @@ def create_gh_pr(base_branch, head_branch, *, title, body):
     """
     Create PR in GitHub
     """
-    username = os.environ.get("GH_USERNAME")
-    gh_auth = os.environ.get("GH_AUTH")
     repo_full_name = os.environ.get("GH_REPO_FULL_NAME")
 
-    request_headers = sansio.create_headers(username, oauth_token=gh_auth)
+    request_headers = get_request_headers()
 
     data = {
         "title": title,
@@ -85,6 +83,39 @@ def create_gh_pr(base_branch, head_branch, *, title, body):
     else:
         print(response.status_code)
         print(response.text)
+
+
+def update_pr(event, file_path, new_content):
+    """
+    Update a file in the PR
+    """
+    url = f"https://api.github.com/repos/{event.data['pull_request']['head']['repo']['full_name']}/contents/{file_path}"
+    request_headers = get_request_headers()
+
+    data = {
+        "path": file_path,
+        "message": "🐍🌚🤖 Formatted using `black`.",
+        "content": new_content,
+        "sha": event.data["pull_request"]["head"]["sha"],
+        "branch": event.data["pull_request"]["head"]["ref"],
+        "committer": {
+            "name": os.environ.get("GH_USERNAME"),
+            "email": os.environ.get("GH_EMAIL"),
+        },
+    }
+    response = requests.put(url, headers=request_headers, json=data)
+    if response.status_code == requests.codes.created:
+        print("file updated")
+
+    else:
+        print(response.status_code)
+        print(response.text)
+    
+
+def get_request_headers():
+    username = os.environ.get("GH_USERNAME")
+    gh_auth = os.environ.get("GH_AUTH")
+    return sansio.create_headers(username, oauth_token=gh_auth)
 
 
 def delete_branch(branch_name):
