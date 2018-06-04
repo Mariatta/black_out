@@ -121,7 +121,7 @@ def get_file_sha(repo_full_name, file_path):
 
     url = f"https://api.github.com/repos/{repo_full_name}/contents/{file_path}"
     request_headers = get_request_headers()
-    response = requests.get(url, request_headers=request_headers)
+    response = requests.get(url, headers=request_headers)
     return response.json()["sha"]
 
 
