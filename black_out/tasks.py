@@ -107,8 +107,9 @@ def black_pr_task(event_data):
     4. black <all affected files>
     5. gh PUT /repos/:owner/:repo/contents/:path
     6. comment on PR
-    7. git checkout master
-    8. git branch -D pr_{pr_number}
+    7. git stash
+    8. git checkout master
+    9. git branch -D pr_{pr_number}
     """
     # cd to the checked out repo, if not already there
     if "repo_checkout" in os.listdir("."):
@@ -147,6 +148,7 @@ def black_pr_task(event_data):
         message = message + "\n (I'm a bot 🤖)"
         util.comment_on_pr(pr_number, message)
 
+    util.exec_command(["git", "stash"])
     util.exec_command(["git", "checkout", "master"])
     util.delete_branch(f"pr_{pr_number}")
 
