@@ -89,11 +89,15 @@ def update_pr(event_data, file_path, new_content):
     """
     Update a file in the PR
     """
-    url = f"https://api.github.com/repos/{event_data['pull_request']['head']['repo']['full_name']}/contents/{file_path}"
+    url = (
+        f"https://api.github.com/repos/{event_data['pull_request']['head']['repo']['full_name']}/contents/{file_path}"
+    )
     request_headers = get_request_headers()
     branch = event_data["pull_request"]["head"]["ref"]
 
-    file_sha = get_file_sha(event_data['pull_request']['head']['repo']['full_name'], file_path, branch)
+    file_sha = get_file_sha(
+        event_data["pull_request"]["head"]["repo"]["full_name"], file_path, branch
+    )
 
     data = {
         "path": file_path,
@@ -113,14 +117,16 @@ def update_pr(event_data, file_path, new_content):
     else:
         print(response.status_code)
         print(response.text)
-    
+
 
 def get_file_sha(repo_full_name, file_path, branch):
     """
     Get the sha for a file on GitHub
     """
 
-    url = f"https://api.github.com/repos/{repo_full_name}/contents/{file_path}?ref={branch}"
+    url = (
+        f"https://api.github.com/repos/{repo_full_name}/contents/{file_path}?ref={branch}"
+    )
     request_headers = get_request_headers()
     response = requests.get(url, headers=request_headers)
     return response.json()["sha"]
