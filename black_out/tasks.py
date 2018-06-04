@@ -8,15 +8,17 @@ from . import util, exceptions
 
 app = celery.Celery("black_out")
 
-app.conf.update(BROKER_URL=os.environ["REDIS_URL"], CELERY_RESULT_BACKEND=os.environ["REDIS_URL"])
+app.conf.update(
+    BROKER_URL=os.environ["REDIS_URL"], CELERY_RESULT_BACKEND=os.environ["REDIS_URL"]
+)
 
 
 @app.task(rate_limit="1/m")
 def setup_repo():
 
-    repo_name = os.environ.get('GH_REPO_NAME')
-    repo_full_name = os.environ.get('GH_REPO_FULL_NAME')
-    os.mkdir('repo_checkout')
+    repo_name = os.environ.get("GH_REPO_NAME")
+    repo_full_name = os.environ.get("GH_REPO_FULL_NAME")
+    os.mkdir("repo_checkout")
     os.chdir("repo_checkout")
     print(f"Setting up {repo_name} repository, cloning from {repo_full_name}")
 
@@ -25,7 +27,7 @@ def setup_repo():
         full_name = os.environ.get("GH_FULL_NAME")
         subprocess.check_output(
             [
-                'git',
+                "git",
                 "clone",
                 f"https://{os.environ.get('GH_AUTH')}:x-oauth-basic@github.com/{repo_full_name}.git",
             ]
@@ -56,8 +58,7 @@ def initiate_black_task(issue_number, issue_creator):
     7. git branch -D issue-NNNN-initialize-black
     """
     # cd to the checked out repo, if not already there
-    if "repo_checkout" \
-            in os.listdir("."):
+    if "repo_checkout" in os.listdir("."):
         os.chdir("repo_checkout")
         os.chdir(f"./{os.environ.get('GH_REPO_NAME')}")
 
@@ -146,13 +147,10 @@ def black_pr_task(pr_number, pr_author, pr_diff_url):
     util.delete_branch(branch_name)
 
 
-class InitRepoStep(
-    bootsteps.StartStopStep,
-):
+class InitRepoStep(bootsteps.StartStopStep):
     def start(self, c):
         print("Initialize the repository.")
         setup_repo()
 
 
-app.steps["worker"].add(
-    InitRepoStep)
+app.steps["worker"].add(InitRepoStep)
