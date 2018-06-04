@@ -103,9 +103,9 @@ def black_pr_task(event):
 
     1. git fetch origin pull/{pr_number}/head:pr_{pr_number}
     2. git checkout pr_{pr_number}
-    5. find out all affected files
-    6. black <all affected files>
-    7. gh PUT /repos/:owner/:repo/contents/:path
+    3. find out all affected files
+    4. black <all affected files>
+    5. gh PUT /repos/:owner/:repo/contents/:path
     6. comment on PR
     7. git checkout master
     8. git branch -D pr_{pr_number}
