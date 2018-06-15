@@ -1,6 +1,10 @@
 black_out
 =========
 
+.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+    :target: https://github.com/ambv/black
+
+
 This is a personal experiment, and still in progress.
 
 I'm wanting a GitHub bot that can:
