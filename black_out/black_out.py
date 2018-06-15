@@ -25,8 +25,7 @@ async def issue_opened(event, gh, *args, **kwargs):
         tasks.initiate_black_task.delay(issue_number, issue_creator)
 
 
-@router.register("pull_request", action="opened")
-@router.register("pull_request", action="reopened")
-@router.register("pull_request", action="synchronize")
-async def pr_opened(event, gh, *args, **kwargs):
-    tasks.black_pr_task.delay(event.data)
+@router.register("pull_request", action="labeled")
+async def pr_labeled(event, gh, *args, **kwargs):
+    if event.data["label"]["name"] == "black out":
+        tasks.black_pr_task.delay(event.data)
