@@ -1,6 +1,6 @@
 aiohttp==3.3.2
 black==18.6b2
-cachetools
+cachetools==2.1.0
 celery
 gidgethub
 requests
