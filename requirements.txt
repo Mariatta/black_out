@@ -2,6 +2,6 @@ aiohttp==3.3.2
 black==18.6b2
 cachetools==2.1.0
 celery==4.2.0
-gidgethub
+gidgethub==2.5.0.post1
 requests
 redis
