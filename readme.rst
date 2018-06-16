@@ -54,6 +54,9 @@ the formatted files.
 Blacken incoming pull request
 =============================
 
+Idea
+----
+
 Once I've blacken an entire repo, perhaps it's a good idea to ensure incoming
 changes are blackened too, and maybe it should be part of some CI.
 
@@ -70,6 +73,11 @@ I don't know if this is a good idea or not, but it could be fun experiment. 😄
 Another thought is, instead of blacken incoming pull requests, I'll just schedule
 the entire repo to be blackened once a week.
 
+Current implementation
+----------------------
+
+I've made it such that the bot will black out a PR when the label `black out` is
+applied.
 
 Deployment
 ==========
@@ -105,8 +113,6 @@ GitHub webhook settings
 Enable the webhook events on:
 
 - Issues
-
-- Pushes (only needed to blacken incoming pull requests)
 
 - Pull requests (only needed to blacken incoming pull requests)
 
