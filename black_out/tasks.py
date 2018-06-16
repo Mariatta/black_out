@@ -148,6 +148,10 @@ def black_pr_task(event_data):
         message = message + "\n (I'm a bot 🤖)"
         util.comment_on_pr(pr_number, message)
 
+    else:
+        message = "🐍🌚🤖 PR is already black! Good job!"
+        util.comment_on_pr(pr_number, message)
+
     util.exec_command(["git", "stash"])
     util.exec_command(["git", "checkout", "master"])
     util.delete_branch(f"pr_{pr_number}")
