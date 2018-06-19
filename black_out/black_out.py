@@ -28,5 +28,8 @@ async def issue_opened(event, gh, *args, **kwargs):
 @router.register("pull_request", action="labeled")
 async def pr_labeled(event, gh, *args, **kwargs):
     """If the label is `black out` and the PR is still `open`."""
-    if event.data["label"]["name"] == "black out" and event.data["pull_request"]["state"] == "open":
+    if (
+        event.data["label"]["name"] == "black out"
+        and event.data["pull_request"]["state"] == "open"
+    ):
         tasks.black_pr_task.delay(event.data)
