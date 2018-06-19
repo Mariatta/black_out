@@ -22,10 +22,13 @@ def checkout_branch(branch_name):
 
 
 def check_black(src):
-    commands = ["black", "--check"]
-    commands.extend(src)
-    result = subprocess.call(commands)
-    return result
+    if src.lower().endswith(".py"):
+        commands = ["black", "--check"]
+        commands.extend(src)
+        result = subprocess.call(commands)
+        return result
+    else:
+        return False
 
 
 def commit_changes(issue_number=None):
