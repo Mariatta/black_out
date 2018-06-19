@@ -76,7 +76,7 @@ the entire repo to be blackened once a week.
 Current implementation
 ----------------------
 
-I've made it such that the bot will black out a PR when the label `black out` is
+I've made it such that the bot will black out a PR when the label ``black out`` is
 applied.
 
 Deployment
