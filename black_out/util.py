@@ -171,3 +171,23 @@ def get_pr_diff_files(diff_url):
             filename = a_file[2:]
             result.append(filename)
     return result
+
+
+def remove_label(pr_number, label):
+    """Remove a label from the PR"""
+    username = os.environ.get("GH_USERNAME")
+    gh_auth = os.environ.get("GH_AUTH")
+    repo_full_name = os.environ.get("GH_REPO_FULL_NAME")
+
+    request_headers = sansio.create_headers(username, oauth_token=gh_auth)
+
+    url = f"https://api.github.com/repos/{repo_full_name}/pulls/{pr_number}"
+    response = requests.get(url, headers=request_headers)
+    pr_data = response.json()
+    labels = [pr_label["name"] for pr_label in pr_data["labels"] if pr_label["name"] != label]
+
+    url = f"https://api.github.com/repos/{repo_full_name}/issues/{pr_number}"
+    data = {"labels": labels}
+    response = requests.patch(url, headers=request_headers, json=data)
+    print(response.status_code)
+    print(response.text)
