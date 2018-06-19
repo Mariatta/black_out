@@ -49,9 +49,7 @@ def comment_on_pr(issue_number, message):
     request_headers = sansio.create_headers(
         os.environ.get("GH_USERNAME"), oauth_token=os.getenv("GH_AUTH")
     )
-    issue_comment_url = (
-        f"https://api.github.com/repos/{os.environ.get('GH_REPO_FULL_NAME')}/issues/{issue_number}/comments"
-    )
+    issue_comment_url = f"https://api.github.com/repos/{os.environ.get('GH_REPO_FULL_NAME')}/issues/{issue_number}/comments"
     data = {"body": message}
     response = requests.post(issue_comment_url, headers=request_headers, json=data)
     if response.status_code == requests.codes.created:
@@ -89,9 +87,7 @@ def update_pr(event_data, file_path, new_content):
     """
     Update a file in the PR
     """
-    url = (
-        f"https://api.github.com/repos/{event_data['pull_request']['head']['repo']['full_name']}/contents/{file_path}"
-    )
+    url = f"https://api.github.com/repos/{event_data['pull_request']['head']['repo']['full_name']}/contents/{file_path}"
     request_headers = get_request_headers()
     branch = event_data["pull_request"]["head"]["ref"]
 
@@ -124,9 +120,7 @@ def get_file_sha(repo_full_name, file_path, branch):
     Get the sha for a file on GitHub
     """
 
-    url = (
-        f"https://api.github.com/repos/{repo_full_name}/contents/{file_path}?ref={branch}"
-    )
+    url = f"https://api.github.com/repos/{repo_full_name}/contents/{file_path}?ref={branch}"
     request_headers = get_request_headers()
     response = requests.get(url, headers=request_headers)
     return response.json()["sha"]
@@ -171,3 +165,25 @@ def get_pr_diff_files(diff_url):
             filename = a_file[2:]
             result.append(filename)
     return result
+
+
+def remove_label(pr_number, label):
+    """Remove a label from the PR"""
+    username = os.environ.get("GH_USERNAME")
+    gh_auth = os.environ.get("GH_AUTH")
+    repo_full_name = os.environ.get("GH_REPO_FULL_NAME")
+
+    request_headers = sansio.create_headers(username, oauth_token=gh_auth)
+
+    url = f"https://api.github.com/repos/{repo_full_name}/pulls/{pr_number}"
+    response = requests.get(url, headers=request_headers)
+    pr_data = response.json()
+    labels = [
+        pr_label["name"] for pr_label in pr_data["labels"] if pr_label["name"] != label
+    ]
+
+    url = f"https://api.github.com/repos/{repo_full_name}/issues/{pr_number}"
+    data = {"labels": labels}
+    response = requests.patch(url, headers=request_headers, json=data)
+    print(response.status_code)
+    print(response.text)
