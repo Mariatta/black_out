@@ -78,7 +78,7 @@ black has been initiated? (I'm a bot 🤖)
         util.comment_on_pr(issue_number, message)
         raise e
 
-    needs_black = util.check_black(["."])
+    needs_black = util.check_black(".")
     if needs_black:
         util.exec_command(["black", "."])
         commit_title, commit_body = util.commit_changes(issue_number)
@@ -129,10 +129,10 @@ def black_pr_task(event_data):
 
     blackened_files = []
     for path in files_affected:
-        needs_black = util.check_black([path])
+        needs_black = util.check_black(path)
         if needs_black:
             commands = ["black"]
-            commands.extend(files_affected)
+            commands.extend([path])
             util.exec_command(commands)
             with open(path, "rb") as reader:
                 encoded = base64.b64encode(reader.read())
