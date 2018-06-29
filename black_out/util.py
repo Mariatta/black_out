@@ -21,14 +21,14 @@ def checkout_branch(branch_name):
         )
 
 
-def check_black(src):
-    if src.lower().endswith(".py"):
+def check_black(source_path):
+    if source_path.lower().endswith(".py"):
         commands = ["black", "--check"]
-        commands.extend(src)
+        commands.extend([source_path])
         result = subprocess.call(commands)
         return result
-    else:
-        return False
+
+    return False
 
 
 def commit_changes(issue_number=None):
