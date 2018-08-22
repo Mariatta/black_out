@@ -4,6 +4,9 @@ black_out
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/ambv/black
 
+.. image:: https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg
+    :target: https://saythanks.io/to/Mariatta
+
 
 This is a personal experiment, and still in progress.
 
