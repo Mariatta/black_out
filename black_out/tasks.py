@@ -45,9 +45,9 @@ def setup_repo(repo_name, repo_full_name):
 
 @app.task()
 def cleanup_repo():
-    print('cleaned up repo')
+    print("cleaned up repo")
     print(os.getcwd())
-    os.chdir('../..')
+    os.chdir("../..")
     shutil.rmtree("repo_checkout")
     print(os.getcwd())
 
@@ -91,7 +91,13 @@ black has been initiated? (I'm a bot 🤖)
         util.exec_command(["black", "."])
         commit_title, commit_body = util.commit_changes(issue_number)
         util.exec_command(["git", "push", "origin", branch_name])
-        util.create_gh_pr("master", branch_name, title=commit_title, body=commit_body, repo_full_name=repo_full_name)
+        util.create_gh_pr(
+            "master",
+            branch_name,
+            title=commit_title,
+            body=commit_body,
+            repo_full_name=repo_full_name,
+        )
         util.exec_command(["git", "checkout", "master"])
         util.delete_branch(branch_name)
     else:
