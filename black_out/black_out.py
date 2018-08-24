@@ -23,7 +23,9 @@ async def issue_opened(event, gh, *args, **kwargs):
         issue_creator = event.data["issue"]["user"]["login"]
         repo_full_name = event.data["repository"]["full_name"]
         repo_name = event.data["repository"]["name"]
-        tasks.initiate_black_task.delay(repo_name, repo_full_name, issue_number, issue_creator)
+        tasks.initiate_black_task.delay(
+            repo_name, repo_full_name, issue_number, issue_creator
+        )
 
 
 @router.register("pull_request", action="labeled")
