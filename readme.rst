@@ -95,10 +95,6 @@ Heroku settings
 
 In Heroku, set the environment variables:
 
-- ``GH_REPO_NAME``: The repository name. For example, for `https://github.com/ambv/black`,
-  the repo name is ``black``.
-- ``GH_REPO_FULL_NAME``: The repository full name (organization and name). For example,
-  for `https://github.com/ambv/black`, the repo full name is ``ambv/black``.
 - ``GH_USERNAME``: The GitHub username for the bot user. The bot user must have
   write access to the repo being blackened.
 - ``GH_EMAIL``: The email address for the bot user. The bot user must have write

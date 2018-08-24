@@ -45,14 +45,16 @@ def commit_changes(issue_number=None):
     return title, body
 
 
-def comment_on_pr(issue_number, message):
+def comment_on_pr(repo_full_name, issue_number, message):
     """
     Leave a comment on a PR/Issue
     """
     request_headers = sansio.create_headers(
         os.environ.get("GH_USERNAME"), oauth_token=os.getenv("GH_AUTH")
     )
-    issue_comment_url = f"https://api.github.com/repos/{os.environ.get('GH_REPO_FULL_NAME')}/issues/{issue_number}/comments"
+    issue_comment_url = (
+        f"https://api.github.com/repos/{repo_full_name}/issues/{issue_number}/comments"
+    )
     data = {"body": message}
     response = requests.post(issue_comment_url, headers=request_headers, json=data)
     if response.status_code == requests.codes.created:
@@ -62,11 +64,10 @@ def comment_on_pr(issue_number, message):
         print(response.text)
 
 
-def create_gh_pr(base_branch, head_branch, *, title, body):
+def create_gh_pr(base_branch, head_branch, *, title, body, repo_full_name):
     """
     Create PR in GitHub
     """
-    repo_full_name = os.environ.get("GH_REPO_FULL_NAME")
 
     request_headers = get_request_headers()
 
@@ -140,10 +141,9 @@ def delete_branch(branch_name):
     subprocess.check_output(cmd)
 
 
-def close_issue(issue_number):
+def close_issue(repo_full_name, issue_number):
     username = os.environ.get("GH_USERNAME")
     gh_auth = os.environ.get("GH_AUTH")
-    repo_full_name = os.environ.get("GH_REPO_FULL_NAME")
 
     request_headers = sansio.create_headers(username, oauth_token=gh_auth)
 
@@ -170,11 +170,10 @@ def get_pr_diff_files(diff_url):
     return result
 
 
-def remove_label(pr_number, label):
+def remove_label(repo_full_name, pr_number, label):
     """Remove a label from the PR"""
     username = os.environ.get("GH_USERNAME")
     gh_auth = os.environ.get("GH_AUTH")
-    repo_full_name = os.environ.get("GH_REPO_FULL_NAME")
 
     request_headers = sansio.create_headers(username, oauth_token=gh_auth)
 

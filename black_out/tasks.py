@@ -1,9 +1,9 @@
 import base64
 import celery
 import os
+import shutil
 import subprocess
 
-from celery import bootsteps
 
 from . import util, exceptions
 
@@ -14,11 +14,9 @@ app.conf.update(
 )
 
 
-@app.task(rate_limit="1/m")
-def setup_repo():
+@app.task()
+def setup_repo(repo_name, repo_full_name):
 
-    repo_name = os.environ.get("GH_REPO_NAME")
-    repo_full_name = os.environ.get("GH_REPO_FULL_NAME")
     os.mkdir("repo_checkout")
     os.chdir("repo_checkout")
     print(f"Setting up {repo_name} repository, cloning from {repo_full_name}")
@@ -45,8 +43,14 @@ def setup_repo():
         print(f"{repo_name} directory already exists")
 
 
-@app.task(rate_limit="1/m")
-def initiate_black_task(issue_number, issue_creator):
+@app.task()
+def cleanup_repo():
+    os.chdir("../..")
+    shutil.rmtree("repo_checkout")
+
+
+@app.task()
+def initiate_black_task(repo_name, repo_full_name, issue_number, issue_creator):
     """Execute black
 
     1. git fetch origin
@@ -58,10 +62,11 @@ def initiate_black_task(issue_number, issue_creator):
     7. git checkout master
     7. git branch -D issue-NNNN-initialize-black
     """
+    setup_repo(repo_name, repo_full_name)
     # cd to the checked out repo, if not already there
     if "repo_checkout" in os.listdir("."):
         os.chdir("repo_checkout")
-        os.chdir(f"./{os.environ.get('GH_REPO_NAME')}")
+        os.chdir(f"./{repo_name}")
 
     branch_name = f"issue-{issue_number}-initialize-black"
 
@@ -75,7 +80,7 @@ def initiate_black_task(issue_number, issue_creator):
 to create the pull request. Perhaps a pull request has been made, or
 black has been initiated? (I'm a bot 🤖)
 """
-        util.comment_on_pr(issue_number, message)
+        util.comment_on_pr(repo_full_name, issue_number, message)
         raise e
 
     needs_black = util.check_black(".")
@@ -83,7 +88,13 @@ black has been initiated? (I'm a bot 🤖)
         util.exec_command(["black", "."])
         commit_title, commit_body = util.commit_changes(issue_number)
         util.exec_command(["git", "push", "origin", branch_name])
-        util.create_gh_pr("master", branch_name, title=commit_title, body=commit_body)
+        util.create_gh_pr(
+            "master",
+            branch_name,
+            title=commit_title,
+            body=commit_body,
+            repo_full_name=repo_full_name,
+        )
         util.exec_command(["git", "checkout", "master"])
         util.delete_branch(branch_name)
     else:
@@ -93,11 +104,13 @@ Closing the issue. 🌮
 (I'm a bot 🤖)
 """
 
-        util.comment_on_pr(issue_number, message)
-        util.close_issue(issue_number)
+        util.comment_on_pr(repo_full_name, issue_number, message)
+        util.close_issue(repo_full_name, issue_number)
+
+    cleanup_repo()
 
 
-@app.task(rate_limit="1/m")
+@app.task()
 def black_pr_task(event_data):
     """Execute black on a PR
 
@@ -111,10 +124,15 @@ def black_pr_task(event_data):
     8. git checkout master
     9. git branch -D pr_{pr_number}
     """
+    repo_name = event_data["repository"]["name"]
+    repo_full_name = event_data["repository"]["full_name"]
+
+    setup_repo(repo_name, repo_full_name)
+
     # cd to the checked out repo, if not already there
     if "repo_checkout" in os.listdir("."):
         os.chdir("repo_checkout")
-        os.chdir(f"./{os.environ.get('GH_REPO_NAME')}")
+        os.chdir(f"./{repo_name}")
 
     pr_author = event_data["pull_request"]["user"]["login"]
 
@@ -146,23 +164,15 @@ def black_pr_task(event_data):
         for b in blackened_files:
             message = message + f"\n - {b}"
         message = message + "\n (I'm a bot 🤖)"
-        util.comment_on_pr(pr_number, message)
-        util.remove_label(pr_number, "black out")
+        util.comment_on_pr(repo_full_name, pr_number, message)
+        util.remove_label(repo_full_name, pr_number, "black out")
 
     else:
         message = "🐍🌚🤖 PR is already black! Good job!"
-        util.comment_on_pr(pr_number, message)
-        util.remove_label(pr_number, "black out")
+        util.comment_on_pr(repo_full_name, pr_number, message)
+        util.remove_label(repo_full_name, pr_number, "black out")
 
     util.exec_command(["git", "stash"])
     util.exec_command(["git", "checkout", "master"])
     util.delete_branch(f"pr_{pr_number}")
-
-
-class InitRepoStep(bootsteps.StartStopStep):
-    def start(self, c):
-        print("Initialize the repository.")
-        setup_repo()
-
-
-app.steps["worker"].add(InitRepoStep)
+    cleanup_repo()
