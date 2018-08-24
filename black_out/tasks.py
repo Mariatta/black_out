@@ -45,8 +45,11 @@ def setup_repo(repo_name, repo_full_name):
 
 @app.task()
 def cleanup_repo():
-    os.chdir("../..")
+    print('cleaned up repo')
+    print(os.getcwd())
+    os.chdir('../..')
     shutil.rmtree("repo_checkout")
+    print(os.getcwd())
 
 
 @app.task()
