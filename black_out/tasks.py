@@ -118,8 +118,8 @@ def black_pr_task(event_data):
     8. git checkout master
     9. git branch -D pr_{pr_number}
     """
-    repo_name = event_data["repository_name"]
-    repo_full_name = event_data["repository_full_name"]
+    repo_name = event_data["repository"]["name"]
+    repo_full_name = event_data["repository"]["full_name"]
 
     setup_repo(repo_name, repo_full_name)
 
