@@ -52,7 +52,9 @@ def comment_on_pr(repo_full_name, issue_number, message):
     request_headers = sansio.create_headers(
         os.environ.get("GH_USERNAME"), oauth_token=os.getenv("GH_AUTH")
     )
-    issue_comment_url = f"https://api.github.com/repos/{repo_full_name}/issues/{issue_number}/comments"
+    issue_comment_url = (
+        f"https://api.github.com/repos/{repo_full_name}/issues/{issue_number}/comments"
+    )
     data = {"body": message}
     response = requests.post(issue_comment_url, headers=request_headers, json=data)
     if response.status_code == requests.codes.created:
