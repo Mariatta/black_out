@@ -1,4 +1,4 @@
-aiohttp==3.4.4
+aiohttp==3.5.4
 black==18.9b0
 cachetools==3.0.0
 celery==4.2.1
