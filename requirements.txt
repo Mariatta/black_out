@@ -4,4 +4,4 @@ cachetools==4.2.1
 celery==5.0.5
 gidgethub==5.0.0
 requests==2.25.1
-redis==2.10.6
+redis==3.5.3
