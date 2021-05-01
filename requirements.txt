@@ -1,6 +1,6 @@
 aiohttp==3.7.4.post0
 black==21.4b2
-cachetools==3.0.0
+cachetools==4.2.2
 celery==4.2.1
 gidgethub==3.0.0
 requests==2.20.1
