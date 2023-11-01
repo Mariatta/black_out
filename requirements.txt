@@ -1,7 +1,7 @@
 aiohttp==3.8.6
 black==23.10.1
 cachetools==5.3.2
-celery==4.2.1
+celery==5.3.4
 gidgethub==3.0.0
 requests==2.20.1
 redis==2.10.6
