@@ -1,5 +1,5 @@
 aiohttp==3.11.15
-black==18.9b0
+black==25.1.0
 cachetools==3.0.0
 celery==4.2.1
 gidgethub==3.0.0
