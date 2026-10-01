@@ -3,5 +3,5 @@ black==26.5.1
 cachetools==7.2.0
 celery==5.6.3
 gidgethub==6.0.0
-requests==2.20.1
+requests==2.34.2
 redis==2.10.6
